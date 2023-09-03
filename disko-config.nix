@@ -2,37 +2,33 @@
   disks ? ["sda" "sdb" "sdc"],
   lib,
   ...
-}: let
-  partitions = {
-    esp = {
-      content = {
-        format = "vfat";
-        mountpoint = "/boot";
-        type = "filesystem";
-      };
-      size = "512M";
-      type = "EF00";
-    };
-    zfs = {
-      size = "100%";
-      content = {
-        pool = "zroot";
-        type = "zfs";
-      };
-    };
-  };
-in {
+}: {
   disko.devices = {
     disk = lib.genAttrs disks (disk: {
       type = "disk";
       device = "/dev/" + disk;
       content = {
-        type = "table";
-        format = "gpt";
-        inherit partitions;
+        type = "gpt";
+        partitions = {
+          esp = {
+            content = {
+              format = "vfat";
+              mountpoint = "/boot";
+              type = "filesystem";
+            };
+            size = "512M";
+            type = "EF00";
+          };
+          zfs = {
+            size = "100%";
+            content = {
+              pool = "zroot";
+              type = "zfs";
+            };
+          };
+        };
       };
     });
-
     zpool = {
       zroot = {
         type = "zpool";
