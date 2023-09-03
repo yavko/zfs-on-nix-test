@@ -3,8 +3,8 @@
   lib,
   ...
 }: let
-  partitions = [
-    {
+  partitions = {
+    esp = {
       content = {
         format = "vfat";
         mountpoint = "/boot";
@@ -12,15 +12,15 @@
       };
       size = "512M";
       type = "EF00";
-    }
-    {
+    };
+    zfs = {
       size = "100%";
       content = {
         pool = "zroot";
         type = "zfs";
       };
-    }
-  ];
+    };
+  };
 in {
   disko.devices = {
     disk = lib.genAttrs disks (disk: {
