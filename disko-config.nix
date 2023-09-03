@@ -1,4 +1,8 @@
-let
+{
+  disks ? ["sda" "sdb" "sdc"],
+  lib,
+  ...
+}: let
   partitions = [
     {
       content = {
@@ -18,35 +22,15 @@ let
     }
   ];
 in {
-  disk = {
-    sda = {
-      type = "disk";
-      device = "/dev/sda";
-      content = {
-        type = "table";
-        format = "gpt";
-        inherit partitions;
-      };
+  disk = lib.genAttrs disks (disk: {
+    type = "disk";
+    device = "/dev/" + disk;
+    content = {
+      type = "table";
+      format = "gpt";
+      inherit partitions;
     };
-    sdb = {
-      type = "disk";
-      device = "/dev/sdb";
-      content = {
-        type = "table";
-        format = "gpt";
-        inherit partitions;
-      };
-    };
-    sdc = {
-      type = "disk";
-      device = "/dev/sdc";
-      content = {
-        type = "table";
-        format = "gpt";
-        inherit partitions;
-      };
-    };
-  };
+  });
 
   zpool = {
     zroot = {
