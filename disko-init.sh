@@ -4,7 +4,7 @@ if [ ! -d /mnt ]; then
     sudo nix --extra-experimental-features "nix-command flakes" run github:nix-community/disko -- --mode disko ./zfs-on-nix-test-main/disko-config.nix
 fi
 
-if [ ! -d /mnt/etc ]; then
+if [ ! -d /mnt ]; then
     echo "fatal: /mnt does not exist" 2>&1
     exit 1
 fi
