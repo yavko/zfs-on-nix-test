@@ -9,9 +9,12 @@ if [ ! -d /mnt ]; then
     exit 1
 fi
 
-sudo nixos-generate-config --no-filesystems --root /mnt
+if [ ! -d /mnt/etc/nixos ]; then
+    sudo nixos-generate-config --no-filesystems --root /mnt
 
-curl -F 'sprunge=<-' http://sprunge.us < /mnt/etc/nixos/configuration.nix
-curl -F 'sprunge=<-' http://sprunge.us < /mnt/etc/nixos/hardware-configuration.nix
+    curl -F 'sprunge=<-' http://sprunge.us < /mnt/etc/nixos/configuration.nix
 
-sudo cp ./zfs-on-nix-test-main/disko-config.nix /mnt/etc/nixos
+    sudo cp ./zfs-on-nix-test-main/disko-config.nix /mnt/etc/nixos
+fi
+
+sudo cp ./zfs-on-nix-test-main/configuration.nix /mnt/etc/nixos
