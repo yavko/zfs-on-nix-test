@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ ! -d mnt ]; then
+if [ ! -d /mnt ]; then
     sudo nix --extra-experimental-features "nix-command flakes" run github:nix-community/disko -- --mode disko ./zfs-on-nix-test-main/disko-config.nix
 fi
 
