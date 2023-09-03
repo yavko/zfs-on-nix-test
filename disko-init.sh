@@ -11,7 +11,7 @@ fi
 
 sudo nixos-generate-config --no-filesystems --root /mnt
 
-curl -F 'sprunge=/mnt/nixos/configuration.nix' http://sprunge.us
-curl -F 'sprunge=/mnt/nixos/hardware-configuration.nix' http://sprunge.us
+curl -F 'sprunge=/mnt/etc/nixos/configuration.nix' http://sprunge.us
+curl -F 'sprunge=/mnt/etc/nixos/hardware-configuration.nix' http://sprunge.us
 
 sudo cp ./zfs-on-nix-test-main/disko-config.nix /mnt/etc/nixos
