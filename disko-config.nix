@@ -13,7 +13,7 @@
           esp = {
             content = {
               format = "vfat";
-              mountpoint = "/boot";
+              mountpoint = "/boot-" + disk;
               type = "filesystem";
             };
             size = "512M";
