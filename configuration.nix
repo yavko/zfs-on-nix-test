@@ -17,7 +17,6 @@ in {
   boot.loader.systemd-boot.enable = true;
   boot.loader.systemd-boot.netbootxyz.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.zfs.enabled = true;
   boot.bootspec.enable = true;
   boot.kernelModules = ["ipmi_devintf" "ipmi_si"];
   environment.systemPackages = [pkgs.ipmitool];
