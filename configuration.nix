@@ -13,6 +13,7 @@ in {
     (import ./disko-config.nix {lib = lib;})
     ./chaotic.nix
   ];
+  fileSystems."/boot".device = lib.mkForce "/dev/disk/by-partlabel/disk-sda-esp";
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.systemd-boot.netbootxyz.enable = true;
