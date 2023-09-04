@@ -2,15 +2,31 @@
   config,
   pkgs,
   ...
-}: {
+}: let
+  impermanence = builtins.fetchTarball "https://github.com/nix-community/impermanence/archive/master.tar.gz";
+in {
   imports = [
     ./hardware-configuration.nix
+    "${impermanence}/nixos.nix"
+    "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
+    ./chaotic.nix
   ];
 
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  disko.devices = import ./disko-config.nix {};
 
-  networking.hostName = "theotokos"; # Define your hostname.
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.systemd-boot.netbootxyz.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+  boot.zfs.enabled = true;
+  boot.bootspec.enable = true;
+  boot.kernelModules = ["ipmi_devintf" "ipmi_si"];
+  environment.systemPackages = [pkgs.ipmitool];
+  boot.supportedFilesystems = ["zfs"];
+
+  networking = {
+    hostName = "theotokos";
+    hostID = "0aa4498d";
+  };
 
   # Set your time zone.
   time.timeZone = "America/Los_Angeles";
@@ -42,6 +58,14 @@
 
   services.openssh.enable = true;
 
+  services.zfs = {
+    autoScrub = {
+      enable = true;
+      interval = "daily";
+    };
+    trim.enable = true;
+  };
+
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
@@ -60,4 +84,78 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "23.05"; # Did you read the comment?
+
+  chaotic.zfs-impermanence-on-shutdown = {
+    enable = true;
+    snapshot = "start";
+    volume = "zroot/ROOT/empty";
+  };
+
+  environment.persistence."/var/persistent" = {
+    hideMounts = true;
+    directories = [
+      "/etc/NetworkManager/system-connections"
+      "/etc/nixos"
+      "/etc/secureboot"
+      "/var/cache/chaotic"
+      "/var/cache/tailscale"
+      "/var/lib/chaotic"
+      "/var/lib/containers"
+      "/var/lib/machines"
+      "/var/lib/systemd"
+      "/var/lib/upower"
+    ];
+    files = [
+      "/var/lib/dbus/machine-id"
+    ];
+    users."root" = {
+      home = "/root";
+      directories = [
+        {
+          directory = ".gnupg";
+          mode = "0700";
+        }
+        {
+          directory = ".ssh";
+          mode = "0700";
+        }
+      ];
+    };
+    users."nikolay" = {
+      directories = [
+        ".ansible"
+        ".config"
+        ".local/share/containers"
+        ".local/share/kwalletd"
+        ".var"
+        {
+          directory = ".gnupg";
+          mode = "0700";
+        }
+        {
+          directory = ".local/share/keyrings";
+          mode = "0700";
+        }
+        {
+          directory = ".ssh";
+          mode = "0700";
+        }
+      ];
+    };
+  };
+
+  # Not important but persistent files
+  environment.persistence."/var/residues" = {
+    hideMounts = true;
+    directories = [
+      "/var/cache"
+      "/var/log"
+    ];
+    users.nikolay = {
+      directories = [
+        ".cache/nix-index"
+        ".local/share/Trash"
+      ];
+    };
+  };
 }

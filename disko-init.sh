@@ -1,4 +1,6 @@
 #!/bin/sh
+set -euo pipefail
+IFS=$'\n\t'
 
 if [ ! -d /mnt ]; then
     sudo nix --extra-experimental-features "nix-command flakes" run github:nix-community/disko -- --mode disko ./zfs-on-nix-test-main/disko-config.nix
@@ -16,5 +18,3 @@ if [ ! -d /mnt/etc/nixos ]; then
 
     sudo cp ./zfs-on-nix-test-main/disko-config.nix /mnt/etc/nixos
 fi
-
-sudo cp ./zfs-on-nix-test-main/configuration.nix /mnt/etc/nixos
