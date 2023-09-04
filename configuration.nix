@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   ...
 }: let
@@ -9,10 +10,9 @@ in {
     ./hardware-configuration.nix
     "${impermanence}/nixos.nix"
     "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
+    (import ./disko-config.nix {lib = lib;})
     ./chaotic.nix
   ];
-
-  disko.devices = import ./disko-config.nix {};
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.systemd-boot.netbootxyz.enable = true;
