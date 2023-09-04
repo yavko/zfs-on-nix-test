@@ -25,7 +25,7 @@ in {
 
   networking = {
     hostName = "theotokos";
-    hostID = "0aa4498d";
+    hostId = "0aa4498d";
   };
 
   # Set your time zone.
