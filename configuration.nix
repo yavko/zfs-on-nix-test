@@ -14,6 +14,8 @@ in {
     ./chaotic.nix
   ];
   fileSystems."/boot".device = lib.mkForce "/dev/disk/by-partlabel/disk-sda-esp";
+  fileSystems."/var/persistent".neededForBoot = true;
+  fileSystems."/var/residues".neededForBoot = true;
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.systemd-boot.netbootxyz.enable = true;
