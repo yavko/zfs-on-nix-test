@@ -13,21 +13,28 @@ in {
     (import ./disko-config.nix {lib = lib;})
     ./chaotic.nix
   ];
-  fileSystems."/boot".device = lib.mkForce "/dev/disk/by-partlabel/disk-sda-esp";
+
+  nix.settings.experimental-features = ["nix-command" "flakes"];
+
   fileSystems."/var/persistent".neededForBoot = true;
   fileSystems."/var/residues".neededForBoot = true;
 
   boot.loader.systemd-boot.enable = true;
-  boot.loader.systemd-boot.netbootxyz.enable = true;
+  boot.loader.efi.efiSysMountPoint = "/boot-sda";
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.zfs.forceImportRoot = false;
+  boot.initrd.systemd.enable = true;
+  boot.loader.systemd-boot.netbootxyz.enable = true;
+  boot.initrd.supportedFilesystems = ["zfs"];
   boot.bootspec.enable = true;
   boot.kernelModules = ["ipmi_devintf" "ipmi_si"];
+  boot.kernelParams = ["elevator=none"];
   environment.systemPackages = [pkgs.ipmitool];
   boot.supportedFilesystems = ["zfs"];
 
   networking = {
     hostName = "theotokos";
-    hostId = "0aa4498d";
+    hostId = builtins.substring 0 8 (builtins.hashString "sha256" config.networking.hostName);
   };
 
   # Set your time zone.
