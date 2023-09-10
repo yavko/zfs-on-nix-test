@@ -12,7 +12,7 @@
         partitions =
           (
             lib.mkIf (disk == (builtins.elemAt disks 0)) {
-              esp = {
+              ESP = {
                 type = "EF00";
                 size = "512M";
                 content = {
@@ -27,8 +27,8 @@
             zfs = {
               size = "100%";
               content = {
-                pool = "zroot";
                 type = "zfs";
+                pool = "zroot";
               };
             };
           };
