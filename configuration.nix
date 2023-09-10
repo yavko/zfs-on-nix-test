@@ -15,7 +15,7 @@
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.systemd-boot.netbootxyz.enable = true;
-  boot.loader.efi.efiSysMountPoint = "/boot-sda";
+  boot.loader.efi.efiSysMountPoint = "/boot/efi";
   boot.loader.efi.canTouchEfiVariables = true;
   boot.zfs.forceImportRoot = false;
   boot.initrd.systemd.enable = true;

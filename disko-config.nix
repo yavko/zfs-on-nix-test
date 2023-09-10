@@ -9,24 +9,27 @@
       device = "/dev/" + disk;
       content = {
         type = "gpt";
-        partitions = {
-          esp = {
-            content = {
-              format = "vfat";
-              mountpoint = "/boot-" + disk;
-              type = "filesystem";
+        partitions =
+          {
+            zfs = {
+              size = "100%";
+              content = {
+                pool = "zroot";
+                type = "zfs";
+              };
             };
-            size = "512M";
-            type = "EF00";
-          };
-          zfs = {
-            size = "100%";
-            content = {
-              pool = "zroot";
-              type = "zfs";
+          }
+          // lib.mkIf (disk == builtins.elemAt disks 0) {
+            esp = {
+              content = {
+                format = "vfat";
+                mountpoint = "/boot";
+                type = "filesystem";
+              };
+              size = "512M";
+              type = "EF00";
             };
           };
-        };
       };
     });
     zpool = {
@@ -63,23 +66,6 @@
           "ROOT/nix" = {
             mountpoint = "/nix";
             options.mountpoint = "legacy";
-            type = "zfs_fs";
-          };
-          "ROOT/residues" = {
-            mountpoint = "/var/residues";
-            options.mountpoint = "legacy";
-            type = "zfs_fs";
-          };
-          "data/persistent" = {
-            mountpoint = "/var/persistent";
-            options.mountpoint = "legacy";
-            type = "zfs_fs";
-          };
-          "reserved" = {
-            options = {
-              mountpoint = "none";
-              reservation = "10G";
-            };
             type = "zfs_fs";
           };
         };
