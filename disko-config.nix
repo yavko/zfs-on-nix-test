@@ -8,11 +8,8 @@
       type = "disk";
       device = "/dev/" + disk;
       content = {
-        type =
-          if (disk == (builtins.elemAt disks 0))
-          then "gpt"
-          else "table";
-        partitions = lib.traceVal (
+        type = "gpt";
+        partitions =
           {
             zfs = {
               size = "100%";
@@ -26,18 +23,17 @@
             if (disk == (builtins.elemAt disks 0))
             then {
               esp = {
+                type = "EF00";
+                size = "512M";
                 content = {
+                  type = "filesystem";
                   format = "vfat";
                   mountpoint = "/boot";
-                  type = "filesystem";
                 };
-                size = "512M";
-                type = "EF00";
               };
             }
             else {}
-          )
-        );
+          );
       };
     });
     zpool = {
@@ -45,14 +41,8 @@
         type = "zpool";
         mode = "raidz";
         rootFsOptions = {
-          acltype = "posixacl";
-          atime = "off";
-          canmount = "off";
           compression = "zstd";
-          dedup = "on";
-          devices = "off";
-          mountpoint = "none";
-          xattr = "sa";
+          "com.sun:auto-snapshot" = "false";
         };
         datasets = {
           "data" = {
