@@ -8,7 +8,6 @@
     ./hardware-configuration.nix
     "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
     (import ./disko-config.nix {lib = lib;})
-    ./chaotic.nix
   ];
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
