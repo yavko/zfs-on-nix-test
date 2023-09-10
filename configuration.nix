@@ -34,7 +34,7 @@
   };
 
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/8B7C-B408";
+    device = "/dev/disk/by-partlabel/disk-dev_sda_esp";
     fsType = "vfat";
   };
 
