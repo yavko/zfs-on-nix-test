@@ -27,7 +27,10 @@ in {
                 mountpoint = "/boot";
               };
             };
-            inherit zfs;
+            zfs = {
+              size = "100%";
+              content = zfs;
+            };
           };
         }
         else zfs;
