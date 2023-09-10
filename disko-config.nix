@@ -9,29 +9,24 @@
       device = "/dev/" + disk;
       content = {
         type = "gpt";
-        partitions =
-          (
-            lib.mkIf true {
-              ESP = {
-                type = "EF00";
-                size = "512M";
-                content = {
-                  type = "filesystem";
-                  format = "vfat";
-                  mountpoint = "/boot";
-                };
-              };
-            }
-          )
-          // {
-            zfs = {
-              size = "100%";
-              content = {
-                type = "zfs";
-                pool = "zroot";
-              };
+        partitions = {
+          ESP = {
+            type = "EF00";
+            size = "512M";
+            content = {
+              type = "filesystem";
+              format = "vfat";
+              mountpoint = "/boot";
             };
           };
+          zfs = {
+            size = "100%";
+            content = {
+              type = "zfs";
+              pool = "zroot";
+            };
+          };
+        };
       };
     });
     zpool = {
