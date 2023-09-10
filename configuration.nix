@@ -7,10 +7,7 @@
   imports = [
     ./hardware-configuration.nix
     "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
-    (import ./disko-config.nix {
-      disks = ["/dev/sda" "/dev/sdb" "/dev/sdc"];
-      inherit lib;
-    })
+    (import ./disko-config.nix {inherit lib;})
   ];
 
   nix.settings.experimental-features = ["nix-command" "flakes"];

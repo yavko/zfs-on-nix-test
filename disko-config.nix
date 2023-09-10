@@ -1,5 +1,5 @@
 {
-  disks,
+  disks ? ["/dev/sda" "/dev/sdb" "/dev/sdc"],
   lib,
   ...
 }: {
