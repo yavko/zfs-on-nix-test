@@ -33,11 +33,6 @@
     fsType = "zfs";
   };
 
-  fileSystems."/boot" = {
-    device = "/dev/disk/by-partlabel/disk-dev_sda_esp";
-    fsType = "vfat";
-  };
-
   boot.initrd.kernelModules = ["zfs"];
   boot.kernelModules = ["ipmi_devintf" "ipmi_si"];
   boot.kernelParams = ["elevator=none"];
