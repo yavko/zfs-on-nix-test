@@ -9,7 +9,7 @@
       device = "/dev/" + disk;
       content = {
         type = "gpt";
-        partitions =
+        partitions = lib.traceVal (
           {
             zfs = {
               size = "100%";
@@ -33,7 +33,8 @@
               };
             }
             else {}
-          );
+          )
+        );
       };
     });
     zpool = {
