@@ -4,11 +4,8 @@
   ...
 }: let
   zfs = {
-    size = "100%";
-    content = {
-      type = "zfs";
-      pool = "zroot";
-    };
+    type = "zfs";
+    pool = "zroot";
   };
 in {
   disko.devices = {
