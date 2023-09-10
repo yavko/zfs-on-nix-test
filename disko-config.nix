@@ -11,7 +11,7 @@
         type =
           if (disk == (builtins.elemAt disks 0))
           then "gpt"
-          else "filesystem";
+          else "table";
         partitions = lib.traceVal (
           {
             zfs = {
