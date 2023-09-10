@@ -11,8 +11,7 @@
         type = "gpt";
         partitions =
           (
-            if (disk == (builtins.elemAt disks 0))
-            then {
+            lib.mkIf (disk == (builtins.elemAt disks 0)) {
               esp = {
                 type = "EF00";
                 size = "512M";
@@ -23,7 +22,6 @@
                 };
               };
             }
-            else {}
           )
           // {
             zfs = {
