@@ -4,6 +4,7 @@ IFS=$'\n\t'
 
 sudo cp \
     ./zfs-on-nix-test-main/configuration.nix \
+    ./zfs-on-nix-test-main/disko-config.nix \
     /mnt/etc/nixos
 
 sudo nixos-install

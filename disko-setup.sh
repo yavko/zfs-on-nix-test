@@ -15,6 +15,4 @@ if [ ! -d /mnt/etc/nixos ]; then
     sudo nixos-generate-config --no-filesystems --root /mnt
 
     curl -F 'sprunge=<-' http://sprunge.us < /mnt/etc/nixos/configuration.nix
-
-    sudo cp ./zfs-on-nix-test-main/disko-config.nix /mnt/etc/nixos
 fi

@@ -7,32 +7,32 @@
     disk = lib.genAttrs disks (disk: {
       type = "disk";
       device = "/dev/" + disk;
-      content = let
-        zfs = {
-          size = "100%";
-          content = {
-            type = "zfs";
-            pool = "zroot";
-          };
-        };
-      in
-        if (disk == (builtins.elemAt disks 0))
-        then {
-          type = "gpt";
-          paritions = {
-            esp = {
-              type = "EF00";
-              size = "512M";
+      content = {
+        type = "gpt";
+        partitions =
+          (
+            lib.mkIf (disk == (builtins.elemAt disks 0)) {
+              esp = {
+                type = "EF00";
+                size = "512M";
+                content = {
+                  type = "filesystem";
+                  format = "vfat";
+                  mountpoint = "/boot";
+                };
+              };
+            }
+          )
+          // {
+            zfs = {
+              size = "100%";
               content = {
-                type = "filesystem";
-                format = "vfat";
-                mountpoint = "/boot";
+                type = "zfs";
+                pool = "zroot";
               };
             };
-            inherit zfs;
           };
-        }
-        else zfs;
+      };
     });
     zpool = {
       zroot = {
