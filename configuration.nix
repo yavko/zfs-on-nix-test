@@ -42,10 +42,7 @@
       git
     ];
     openssh.authorizedKeys.keys = [
-      (pkgs.fetchurl {
-        url = "https://github.com/nikolay.keys";
-        sha256 = "sha256-UQuYnua/Y/SCk6w+pLSc62rXAkwbLwbLWv9flu8pQhU="; # curl -sL https://github.com/nikolay.keys | openssl sha256 -binary | base64 -
-      })
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJSzZxIxZL/S5VVi4yjhXZO8iI4A67Uf23iurLuPtZjm"
     ];
   };
 
