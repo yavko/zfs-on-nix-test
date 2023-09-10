@@ -10,16 +10,7 @@
       content = {
         type = "gpt";
         partitions =
-          {
-            zfs = {
-              size = "100%";
-              content = {
-                pool = "zroot";
-                type = "zfs";
-              };
-            };
-          }
-          // (
+          (
             if (disk == (builtins.elemAt disks 0))
             then {
               esp = {
@@ -33,7 +24,16 @@
               };
             }
             else {}
-          );
+          )
+          // {
+            zfs = {
+              size = "100%";
+              content = {
+                pool = "zroot";
+                type = "zfs";
+              };
+            };
+          };
       };
     });
     zpool = {
