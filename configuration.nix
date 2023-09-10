@@ -16,7 +16,7 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.systemd-boot.netbootxyz.enable = true;
   boot.supportedFilesystems = ["zfs"];
-  boot.zfs.forceImportRoot = true
+  boot.zfs.forceImportRoot = true;
 
   fileSystems."/var/lib" = {
     device = "zroot/nixos/var/lib";
