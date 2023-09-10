@@ -12,18 +12,36 @@
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
 
+  boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.systemd-boot.enable = true;
   boot.loader.systemd-boot.netbootxyz.enable = true;
-  boot.loader.efi.efiSysMountPoint = "/boot/efi";
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.zfs.forceImportRoot = false;
-  boot.initrd.systemd.enable = true;
-  boot.initrd.supportedFilesystems = ["zfs"];
-  boot.bootspec.enable = true;
+  boot.supportedFilesystems = ["zfs"];
+  boot.zfs.forceImportRoot = true
+
+  fileSystems."/var/lib" = {
+    device = "zroot/nixos/var/lib";
+    fsType = "zfs";
+  };
+
+  fileSystems."/var/log" = {
+    device = "zroot/nixos/var/log";
+    fsType = "zfs";
+  };
+
+  fileSystems."/nix" = {
+    device = "zroot/nixos/nix";
+    fsType = "zfs";
+  };
+
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-uuid/8B7C-B408";
+    fsType = "vfat";
+  };
+
+  boot.initrd.kernelModules = ["zfs"];
   boot.kernelModules = ["ipmi_devintf" "ipmi_si"];
   boot.kernelParams = ["elevator=none"];
   environment.systemPackages = [pkgs.ipmitool];
-  boot.supportedFilesystems = ["zfs"];
 
   networking = {
     hostName = "theotokos";
