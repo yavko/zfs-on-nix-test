@@ -15,7 +15,9 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.systemd-boot.enable = true;
   boot.loader.systemd-boot.netbootxyz.enable = true;
+
   boot.supportedFilesystems = ["zfs"];
+
   boot.zfs.forceImportRoot = true;
 
   fileSystems."/var/lib" = {
@@ -35,7 +37,7 @@
 
   boot.initrd.kernelModules = ["zfs"];
   boot.kernelModules = ["ipmi_devintf" "ipmi_si"];
-  boot.kernelParams = ["elevator=none"];
+  boot.kernelParams = ["elevator=none" "boot.shell_on_fail"];
   environment.systemPackages = [pkgs.ipmitool];
 
   networking = {
