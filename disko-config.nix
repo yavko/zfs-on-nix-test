@@ -1,5 +1,5 @@
 {
-  disks ? ["sda" "sdb" "sdc"],
+  disks,
   lib,
   ...
 }: {
@@ -44,25 +44,25 @@
         };
         datasets = {
           "data" = {
-            options.mountpoint = "none";
             type = "zfs_fs";
+            options.mountpoint = "none";
           };
           "ROOT" = {
-            options.mountpoint = "none";
             type = "zfs_fs";
+            options.mountpoint = "none";
           };
           "ROOT/empty" = {
+            type = "zfs_fs";
             mountpoint = "/";
             options.mountpoint = "legacy";
             postCreateHook = ''
               zfs snapshot zroot/ROOT/empty@start
             '';
-            type = "zfs_fs";
           };
           "ROOT/nix" = {
+            type = "zfs_fs";
             mountpoint = "/nix";
             options.mountpoint = "legacy";
-            type = "zfs_fs";
           };
         };
       };
