@@ -19,7 +19,7 @@
               };
             };
           }
-          // lib.mkIf (disk == builtins.elemAt disks 0) {
+          // (lib.mkIf (disk == builtins.elemAt disks 0) {
             esp = {
               content = {
                 format = "vfat";
@@ -29,7 +29,7 @@
               size = "512M";
               type = "EF00";
             };
-          };
+          });
       };
     });
     zpool = {
