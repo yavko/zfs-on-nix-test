@@ -4,14 +4,15 @@
   ...
 }: {
   disko.devices = {
-    disk = lib.genAttrs disks (disk: {
+    disk = lib.genAttrs disks (device: {
       type = "disk";
-      device = "/dev/" + disk;
+      name = lib.removePrefix "_" (lib.replaceStrings ["/"] ["_"] device);
+      device = device;
       content = {
         type = "gpt";
         partitions =
           (
-            lib.mkIf (disk == (builtins.elemAt disks 0)) {
+            lib.mkIf (device == (builtins.elemAt disks 0)) {
               esp = {
                 type = "EF00";
                 size = "512M";

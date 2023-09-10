@@ -8,7 +8,7 @@
     ./hardware-configuration.nix
     "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
     (import ./disko-config.nix {
-      disks = ["sda" "sdb" "sdc"];
+      disks = ["/dev/sda" "/dev/sdb" "/dev/sdc"];
       inherit lib;
     })
   ];
