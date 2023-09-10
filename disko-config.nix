@@ -2,38 +2,37 @@
   disks ? ["/dev/sda" "/dev/sdb" "/dev/sdc"],
   lib,
   ...
-}: {
+}: let
+  zfs = {
+    size = "100%";
+    content = {
+      type = "zfs";
+      pool = "zroot";
+    };
+  };
+in {
   disko.devices = {
     disk = lib.genAttrs disks (device: {
       type = "disk";
       name = lib.removePrefix "_" (builtins.replaceStrings ["/"] ["_"] device);
       device = device;
-      content = {
-        type = "gpt";
-        partitions =
-          (
-            lib.mkIf (device == (builtins.elemAt disks 0)) {
-              esp = {
-                type = "EF00";
-                size = "512M";
-                content = {
-                  type = "filesystem";
-                  format = "vfat";
-                  mountpoint = "/boot";
-                };
-              };
-            }
-          )
-          // {
-            zfs = {
-              size = "100%";
+      content =
+        if (device == (builtins.elemAt disks 0))
+        then {
+          partitions = {
+            esp = {
+              type = "EF00";
+              size = "512M";
               content = {
-                type = "zfs";
-                pool = "zroot";
+                type = "filesystem";
+                format = "vfat";
+                mountpoint = "/boot";
               };
             };
+            inherit zfs;
           };
-      };
+        }
+        else zfs;
     });
     zpool = {
       zroot = {
@@ -43,29 +42,9 @@
           compression = "zstd";
           "com.sun:auto-snapshot" = "false";
         };
-        datasets = {
-          "data" = {
-            type = "zfs_fs";
-            options.mountpoint = "none";
-          };
-          "ROOT" = {
-            type = "zfs_fs";
-            options.mountpoint = "none";
-          };
-          "ROOT/empty" = {
-            type = "zfs_fs";
-            mountpoint = "/";
-            options.mountpoint = "legacy";
-            postCreateHook = ''
-              zfs snapshot zroot/ROOT/empty@start
-            '';
-          };
-          "ROOT/nix" = {
-            type = "zfs_fs";
-            mountpoint = "/nix";
-            options.mountpoint = "legacy";
-          };
-        };
+        mountpoint = "/";
+        postCreateHook = "zfs snapshot zroot@blank";
+        datasets = [];
       };
     };
   };
