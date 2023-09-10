@@ -32,7 +32,7 @@
     zpool = {
       zroot = {
         type = "zpool";
-        mode = "mirror";
+        mode = "raidz";
         rootFsOptions = {
           acltype = "posixacl";
           atime = "off";

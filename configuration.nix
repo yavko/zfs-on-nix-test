@@ -3,12 +3,9 @@
   lib,
   pkgs,
   ...
-}: let
-  impermanence = builtins.fetchTarball "https://github.com/nix-community/impermanence/archive/master.tar.gz";
-in {
+}: {
   imports = [
     ./hardware-configuration.nix
-    "${impermanence}/nixos.nix"
     "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
     (import ./disko-config.nix {lib = lib;})
     ./chaotic.nix
@@ -16,15 +13,12 @@ in {
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
 
-  fileSystems."/var/persistent".neededForBoot = true;
-  fileSystems."/var/residues".neededForBoot = true;
-
   boot.loader.systemd-boot.enable = true;
+  boot.loader.systemd-boot.netbootxyz.enable = true;
   boot.loader.efi.efiSysMountPoint = "/boot-sda";
   boot.loader.efi.canTouchEfiVariables = true;
   boot.zfs.forceImportRoot = false;
   boot.initrd.systemd.enable = true;
-  boot.loader.systemd-boot.netbootxyz.enable = true;
   boot.initrd.supportedFilesystems = ["zfs"];
   boot.bootspec.enable = true;
   boot.kernelModules = ["ipmi_devintf" "ipmi_si"];
@@ -49,7 +43,10 @@ in {
       git
     ];
     openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJSzZxIxZL/S5VVi4yjhXZO8iI4A67Uf23iurLuPtZjm"
+      (pkgs.fetchurl {
+        url = "https://github.com/nikolay.keys";
+        sha256 = "sha256-UQuYnua/Y/SCk6w+pLSc62rXAkwbLwbLWv9flu8pQhU="; # curl -sL https://github.com/nikolay.keys | openssl sha256 -binary | base64 -
+      })
     ];
   };
 
@@ -93,78 +90,4 @@ in {
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "23.05"; # Did you read the comment?
-
-  chaotic.zfs-impermanence-on-shutdown = {
-    enable = true;
-    snapshot = "start";
-    volume = "zroot/ROOT/empty";
-  };
-
-  environment.persistence."/var/persistent" = {
-    hideMounts = true;
-    directories = [
-      "/etc/NetworkManager/system-connections"
-      "/etc/nixos"
-      "/etc/secureboot"
-      "/var/cache/chaotic"
-      "/var/cache/tailscale"
-      "/var/lib/chaotic"
-      "/var/lib/containers"
-      "/var/lib/machines"
-      "/var/lib/systemd"
-      "/var/lib/upower"
-    ];
-    files = [
-      "/var/lib/dbus/machine-id"
-    ];
-    users."root" = {
-      home = "/root";
-      directories = [
-        {
-          directory = ".gnupg";
-          mode = "0700";
-        }
-        {
-          directory = ".ssh";
-          mode = "0700";
-        }
-      ];
-    };
-    users."nikolay" = {
-      directories = [
-        ".ansible"
-        ".config"
-        ".local/share/containers"
-        ".local/share/kwalletd"
-        ".var"
-        {
-          directory = ".gnupg";
-          mode = "0700";
-        }
-        {
-          directory = ".local/share/keyrings";
-          mode = "0700";
-        }
-        {
-          directory = ".ssh";
-          mode = "0700";
-        }
-      ];
-    };
-  };
-
-  # Not important but persistent files
-  environment.persistence."/var/residues" = {
-    hideMounts = true;
-    directories = [
-      "/var/cache"
-      "/var/log"
-    ];
-    users.nikolay = {
-      directories = [
-        ".cache/nix-index"
-        ".local/share/Trash"
-      ];
-    };
-  };
 }
