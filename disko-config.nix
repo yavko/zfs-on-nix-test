@@ -19,17 +19,21 @@
               };
             };
           }
-          // (lib.mkIf (disk == builtins.elemAt disks 0) {
-            esp = {
-              content = {
-                format = "vfat";
-                mountpoint = "/boot";
-                type = "filesystem";
+          // (
+            if (disk == builtins.elemAt disks 0)
+            then {
+              esp = {
+                content = {
+                  format = "vfat";
+                  mountpoint = "/boot";
+                  type = "filesystem";
+                };
+                size = "512M";
+                type = "EF00";
               };
-              size = "512M";
-              type = "EF00";
-            };
-          });
+            }
+            else {}
+          );
       };
     });
     zpool = {
