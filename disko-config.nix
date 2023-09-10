@@ -11,7 +11,7 @@
         type = "gpt";
         partitions =
           (
-            lib.mkIf (disk == (builtins.elemAt disks 0)) {
+            lib.mkIf true {
               ESP = {
                 type = "EF00";
                 size = "512M";
