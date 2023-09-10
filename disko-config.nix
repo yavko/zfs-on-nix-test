@@ -3,6 +3,7 @@
   lib,
   ...
 }: let
+  bootDevice = builtins.elemAt disks 0;
   zfs = {
     type = "zfs";
     pool = "zroot";
@@ -14,7 +15,7 @@ in {
       name = lib.removePrefix "_" (builtins.replaceStrings ["/"] ["_"] device);
       device = device;
       content =
-        if (device == (builtins.elemAt disks 0))
+        if device == bootDevice
         then {
           type = "gpt";
           partitions = {
