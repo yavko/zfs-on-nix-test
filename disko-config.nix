@@ -19,8 +19,8 @@
               };
             };
           }
-          + (
-            if (disk == builtins.elemAt disks 0)
+          // (
+            if (disk == (builtins.elemAt disks 0))
             then {
               esp = {
                 content = {
