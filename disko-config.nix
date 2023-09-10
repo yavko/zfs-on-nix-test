@@ -45,7 +45,6 @@ in {
         };
         mountpoint = "/";
         postCreateHook = "zfs snapshot zroot@blank";
-        datasets = [];
       };
     };
   };
