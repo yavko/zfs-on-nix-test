@@ -19,6 +19,7 @@ in {
       content =
         if (device == (builtins.elemAt disks 0))
         then {
+          type = "gpt";
           partitions = {
             esp = {
               type = "EF00";
