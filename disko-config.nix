@@ -6,7 +6,7 @@
   disko.devices = {
     disk = lib.genAttrs disks (device: {
       type = "disk";
-      name = lib.removePrefix "_" (lib.replaceStrings ["/"] ["_"] device);
+      name = lib.removePrefix "_" (builtins.replaceStrings ["/"] ["_"] device);
       device = device;
       content = {
         type = "gpt";
