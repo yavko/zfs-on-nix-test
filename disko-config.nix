@@ -8,7 +8,10 @@
       type = "disk";
       device = "/dev/" + disk;
       content = {
-        type = "gpt";
+        type =
+          if (disk == (builtins.elemAt disks 0))
+          then "gpt"
+          else "filesystem";
         partitions = lib.traceVal (
           {
             zfs = {
