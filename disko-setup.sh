@@ -12,7 +12,7 @@ if [ ! -d /mnt ]; then
 fi
 
 if [ ! -d /mnt/etc/nixos ]; then
-    sudo nixos-generate-config --no-filesystems --root /mnt
-
-    curl -F 'sprunge=<-' http://sprunge.us < /mnt/etc/nixos/configuration.nix
+    sudo nixos-generate-config --no-filesystems --root /mnt \
+    && sudo mount \
+    && curl -F 'sprunge=<-' http://sprunge.us < /mnt/etc/nixos/configuration.nix
 fi
