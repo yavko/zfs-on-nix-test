@@ -21,7 +21,7 @@ if [ ! -d /mnt/etc/nixos ]; then
 
   mount
 
-  curl -F 'sprunge=<-' http://sprunge.us < /mnt/etc/nixos/configuration.nix
+#curl -F 'sprunge=<-' http://sprunge.us < /mnt/etc/nixos/configuration.nix
 
   cp \
     ./zfs-on-nix-test-main/configuration.nix \
