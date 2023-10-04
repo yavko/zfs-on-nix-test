@@ -3,9 +3,13 @@
   lib,
   pkgs,
   ...
-}: {
+}: let
+  impermanence = builtins.fetchTarball "https://github.com/nix-community/impermanence/archive/master.tar.gz";
+in {
   imports = [
     ./hardware-configuration.nix
+    "${impermanence}/nixos.nix"
+    ./chaotic.nix
     "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
     (import ./disko-config.nix {inherit lib;})
   ];
@@ -20,20 +24,20 @@
 
   boot.zfs.forceImportRoot = true;
 
-  fileSystems."/var/lib" = {
-    device = "zroot/nixos/var/lib";
-    fsType = "zfs";
-  };
+  # fileSystems."/var/lib" = {
+  #   device = "zroot/nixos/var/lib";
+  #   fsType = "zfs";
+  # };
 
-  fileSystems."/var/log" = {
-    device = "zroot/nixos/var/log";
-    fsType = "zfs";
-  };
+  # fileSystems."/var/log" = {
+  #   device = "zroot/nixos/var/log";
+  #   fsType = "zfs";
+  # };
 
-  fileSystems."/nix" = {
-    device = "zroot/nixos/nix";
-    fsType = "zfs";
-  };
+  # fileSystems."/nix" = {
+  #   device = "zroot/nixos/nix";
+  #   fsType = "zfs";
+  # };
 
   boot.initrd.kernelModules = ["zfs"];
   boot.kernelModules = ["ipmi_devintf" "ipmi_si"];
@@ -41,7 +45,7 @@
   environment.systemPackages = [pkgs.ipmitool];
 
   networking = {
-    hostName = "theotokos";
+    hostName = "maple";
     hostId = builtins.substring 0 8 (builtins.hashString "sha256" config.networking.hostName);
   };
 
@@ -50,7 +54,7 @@
 
   i18n.defaultLocale = "en_US.UTF-8";
 
-  users.users.nikolay = {
+  users.users.yavor = {
     isNormalUser = true;
     extraGroups = ["wheel"]; # Enable ‘sudo’ for the user.
     packages = with pkgs; [
@@ -82,6 +86,84 @@
     };
     trim.enable = true;
   };
+
+
+  chaotic.zfs-impermanence-on-shutdown = {
+    enable = true;
+    snapshot = "start";
+    volume = "zroot/ROOT/empty";
+  };
+
+  environment.persistence."/var/persistent" = {
+    hideMounts = true;
+    directories = [
+      "/etc/NetworkManager/system-connections"
+      "/etc/nixos"
+      "/etc/secureboot"
+      "/var/cache/chaotic"
+      "/var/cache/tailscale"
+      "/var/lib/chaotic"
+      "/var/lib/containers"
+      "/var/lib/machines"
+      "/var/lib/systemd"
+      "/var/lib/upower"
+    ];
+    files = [
+      "/var/lib/dbus/machine-id"
+    ];
+    users."root" = {
+      home = "/root";
+      directories = [
+        {
+          directory = ".gnupg";
+          mode = "0700";
+        }
+        {
+          directory = ".ssh";
+          mode = "0700";
+        }
+      ];
+    };
+    users."yavor" = {
+      directories = [
+        ".ansible"
+        ".config"
+        ".local/share/containers"
+        ".local/share/kwalletd"
+        ".var"
+        {
+          directory = ".gnupg";
+          mode = "0700";
+        }
+        {
+          directory = ".local/share/keyrings";
+          mode = "0700";
+        }
+        {
+          directory = ".ssh";
+          mode = "0700";
+        }
+      ];
+    };
+  };
+
+  # Not important but persistent files
+  environment.persistence."/var/residues" = {
+    hideMounts = true;
+    directories = [
+      "/var/cache"
+      "/var/log"
+    ];
+    users.nikolay = {
+      directories = [
+        ".cache/nix-index"
+        ".local/share/Trash"
+      ];
+    };
+  };
+
+fileSystems."/var/persistent".neededForBoot = true;
+fileSystems."/var/residues".neededForBoot = true;
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];

@@ -1,5 +1,5 @@
 {
-  disks ? ["/dev/sda" "/dev/sdb" "/dev/sdc"],
+  disks ? ["/dev/sda" "/dev/sdb"],
   lib,
   ...
 }: let
@@ -41,15 +41,53 @@ in {
         type = "zpool";
         mode = "raidz";
         rootFsOptions = {
+          acltype = "posixacl";
+          atime = "off";
+          canmount = "off";
           compression = "zstd";
-          "com.sun:auto-snapshot" = "false";
+          dedup = "on";
+          devices = "off";
+          mountpoint = "none";
+          xattr = "sa";
         };
-        mountpoint = "/";
-        postCreateHook = "zfs snapshot zroot@blank";
         datasets = {
-          "root" = {
-            type = "zfs_fs";
+          "data" = {
             options.mountpoint = "none";
+            type = "zfs_fs";
+          };
+          "ROOT" = {
+            options.mountpoint = "none";
+            type = "zfs_fs";
+          };
+          "ROOT/empty" = {
+            mountpoint = "/";
+            options.mountpoint = "legacy";
+            postCreateHook = ''
+              zfs snapshot zroot/ROOT/empty@start
+            '';
+            type = "zfs_fs";
+          };
+          "ROOT/nix" = {
+            mountpoint = "/nix";
+            options.mountpoint = "legacy";
+            type = "zfs_fs";
+          };
+          "ROOT/residues" = {
+            mountpoint = "/var/residues";
+            options.mountpoint = "legacy";
+            type = "zfs_fs";
+          };
+          "data/persistent" = {
+            mountpoint = "/var/persistent";
+            options.mountpoint = "legacy";
+            type = "zfs_fs";
+          };
+          "reserved" = {
+            options = {
+              mountpoint = "none";
+              reservation = "10G";
+            };
+            type = "zfs_fs";
           };
         };
       };
